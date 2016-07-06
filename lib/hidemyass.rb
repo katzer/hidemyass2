@@ -7,17 +7,17 @@ require 'hidemyass/version'
 #          but retrieve the list just a single time.
 #
 #   HideMyAss.proxies
-#   # => [HideMyAss::Proxy]
+#   # => HideMyAss::ProxyList
 #
 # @example Fetch the list with each call.
 #
 #   HideMyAss.proxies!
-#   # => [HideMyAss::Proxy]
+#   # => HideMyAss::ProxyList
 #
 # @example Limit proxies to only available in Europe.
 #
 #   HideMyAss.proxies 'c[]' => 'Europe'
-#   # => [HideMyAss::Proxy]
+#   # => HideMyAss::ProxyList
 #
 module HideMyAss
   # List of proxies found at hidemyass.com.
@@ -47,6 +47,7 @@ module HideMyAss
   #
   # @return [ Void ]
   def self.form_data=(data)
+    raise ArgumentError, 'form data has to be a hash' unless data.is_a? Hash
     @form_data = data
   end
 

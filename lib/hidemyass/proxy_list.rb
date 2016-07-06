@@ -26,8 +26,8 @@ module HideMyAss
     # @param [ Hash ] form_data See HideMyAss.form_data for more info.
     #
     # @return [ HideMyAss::ProxyList ]
-    def initialize(form_data)
-      self.form_data = form_data
+    def initialize(form_data = HideMyAss.form_data)
+      self.form_data = form_data.dup
       @proxies       = fetch
     end
 
@@ -50,6 +50,8 @@ module HideMyAss
       link    = page.at_css(sel_lnk)
 
       link ? proxies.concat(fetch("#{ENDPOINT}#{link[:href]}")) : proxies
+    rescue Timeout::Error
+      []
     end
   end
 end

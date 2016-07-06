@@ -38,7 +38,7 @@ module HideMyAss
     # @return [ Int ]
     def last_updated
       @last_updated ||= begin
-        @row.at_xpath('td[1]').text.strip.split(' ')[0].map do |it|
+        @row.at_xpath('td[1]').text.strip.split(' ').map do |it|
           case it
           when /sec/ then it.scan(/\d+/)[0].to_i
           when /min/ then it.scan(/\d+/)[0].to_i * 60
@@ -50,6 +50,16 @@ module HideMyAss
     end
 
     alias last_test last_updated
+
+    # The IP of the proxy server.
+    #
+    # @return [ String ]
+    def ip
+      @ip ||= @row.at_xpath('td[2]/span').children
+                  .select { |el| ip_block? el }
+                  .map! { |el| el.text.strip }
+                  .join('')
+    end
 
     # The port for the proxy.
     #
@@ -81,22 +91,21 @@ module HideMyAss
       @connection_time ||= @row.at_xpath('td[6]/div')[:value].to_i
     end
 
-    # The network protocol in in upercase letters.
-    # (HTTPS or HTTP or SOCKS4/5).
+    # The network protocol in in downcase letters.
+    # (https or http or socks4/5).
     #
     # @return [ String ]
     def type
-      @type ||= @row.at_xpath('td[7]').text.strip.upcase
+      @type ||= @row.at_xpath('td[7]').text.strip.downcase
     end
 
     alias protocol type
 
-    # The level of anonymity in in upercase letters.
-    # (LOW, MEDIUM, HIGH, ...).
+    # The level of anonymity (Low, Medium, High, ...).
     #
     # @return [ String ]
     def anonymity
-      @anonymity ||= @row.at_xpath('td[8]').text.strip.upcase
+      @anonymity ||= @row.at_xpath('td[8]').text.strip
     end
 
     # The complete URL of that proxy server.
@@ -104,6 +113,24 @@ module HideMyAss
     # @return [ String ]
     def url
       "#{protocol}://#{ip}:#{port}"
+    end
+
+    private
+
+    # To find out if the element is a part of the IP.
+    #
+    # @param [ Nokogiri::XML ] el
+    #
+    # @return [ Boolean ]
+    def ip_block?(el)
+      return false if el[:style].to_s =~ /no/
+
+      @clss ||= @row.at_xpath('td[2]/span/style').text.split
+                    .map! { |it| it[1..4] if it !~ /none/ }.compact
+
+      cls = el[:class].to_s
+
+      el.name == 'text' || cls =~ /\d+/ || @clss.include?(cls)
     end
   end
 end
