@@ -7,7 +7,7 @@ require 'pry'
 
 WebMock.disable_net_connect!(allow: 'codeclimate.com')
 
-CodeClimate::TestReporter.start
+CodeClimate::TestReporter.start if RUBY_ENGINE == 'ruby'
 
 SimpleCov.start do
   add_filter '/spec'
