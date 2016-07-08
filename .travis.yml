@@ -9,10 +9,8 @@ rvm:
   - rbx-2
   - ruby-head
   - jruby-head
-  - rbx-head
 matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx-head
 before_install: gem install bundler
