@@ -53,10 +53,10 @@ require 'hidemyass'
 # pp   - Per Page. 0..3 = 10, 25, 50, 100.
 # sortBy - Sort by. Defaults to date.
 
-proxies = HideMyAss.proxies 'c[]' => 'FRANCE', sortBy: 'response_time'
+proxies = HideMyAss.proxies 'c[]' => 'France', sortBy: 'response_time'
 
 proxies.first.country
-# => 'FRANCE'
+# => 'france'
 ```
 
 Visit http://proxylist.hidemyass.com for more informations how to filter.

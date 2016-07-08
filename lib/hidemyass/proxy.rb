@@ -68,11 +68,11 @@ module HideMyAss
       @port ||= @row.at_xpath('td[3]').text.strip.to_i
     end
 
-    # The country where the proxy is hosted.
+    # The country where the proxy is hosted in downcase letters.
     #
     # @return [ String ]
     def country
-      @country ||= @row.at_xpath('td[4]').text.strip
+      @country ||= @row.at_xpath('td[4]').text.strip.downcase
     end
 
     # The average response time in milliseconds.
@@ -92,7 +92,7 @@ module HideMyAss
     end
 
     # The network protocol in in downcase letters.
-    # (https or http or socks4/5).
+    # (https or http or socks)
     #
     # @return [ String ]
     def type
@@ -101,11 +101,12 @@ module HideMyAss
 
     alias protocol type
 
-    # The level of anonymity (Low, Medium, High, ...).
+    # The level of anonymity in downcase letters.
+    # (low, medium, high, ...)
     #
     # @return [ String ]
     def anonymity
-      @anonymity ||= @row.at_xpath('td[8]').text.strip
+      @anonymity ||= @row.at_xpath('td[8]').text.strip.downcase
     end
 
     # The complete URL of that proxy server.
@@ -120,6 +121,13 @@ module HideMyAss
     # @return [ Boolean ]
     def valid?
       ip.split('.').reject(&:empty?).count == 4
+    end
+
+    # If the proxy's network protocol is HTTP.
+    #
+    # @return [ Boolean ]
+    def http?
+      protocol == 'http'
     end
 
     # If the proxy's network protocol is HTTPS.
@@ -157,6 +165,7 @@ module HideMyAss
       anonym? && ssl?
     end
 
+    # :nocov:
     # Custom inspect method.
     #
     # @example
@@ -167,6 +176,7 @@ module HideMyAss
     def inspect
       "<#{self.class.name} #{url}>"
     end
+    # :nocov:
 
     private
 

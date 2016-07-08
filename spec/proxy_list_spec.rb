@@ -10,6 +10,30 @@ describe HideMyAss::ProxyList do
     end
 
     it('contains 83 proxies') { expect(subject.count).to eq(83) }
+
+    it('contains 73 proxies with http support') do
+      expect(subject.find_all(&:http?).count).to eq(73)
+    end
+
+    it('contains 9 proxies with https support') do
+      expect(subject.find_all(&:https?).count).to eq(9)
+    end
+
+    it('contains 1 proxie with socks support') do
+      expect(subject.find_all(&:socks?).count).to eq(1)
+    end
+
+    it('contains 10 proxies with socks support') do
+      expect(subject.find_all(&:ssl?).count).to eq(10)
+    end
+
+    it('contains 82 proxies with high anonymity') do
+      expect(subject.find_all(&:anonym?).count).to eq(82)
+    end
+
+    it('contains 82 secure proxies') do
+      expect(subject.find_all(&:secure?).count).to eq(10)
+    end
   end
 
   context 'when network is offline' do
