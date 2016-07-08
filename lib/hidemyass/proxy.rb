@@ -115,6 +115,41 @@ module HideMyAss
       "#{protocol}://#{ip}:#{port}"
     end
 
+    # If the proxy's network protocol is HTTPS.
+    #
+    # @return [ Boolean ]
+    def https?
+      protocol == 'https'
+    end
+
+    # If the proxy's network protocol is SOCKS.
+    #
+    # @return [ Boolean ]
+    def socks?
+      protocol.start_with? 'socks'
+    end
+
+    # If the proxy supports SSL encryption.
+    #
+    # @return [ Boolean ]
+    def ssl?
+      https? || socks?
+    end
+
+    # If the proxy's anonymity is high or even higher.
+    #
+    # @return [ Boolean ]
+    def anonym?
+      anonymity.start_with? 'high'
+    end
+
+    # If the proxy's anonymity is at least high and protocol is encrypted.
+    #
+    # @return [ Boolean ]
+    def secure?
+      anonym? && ssl?
+    end
+
     private
 
     # To find out if the element is a part of the IP.

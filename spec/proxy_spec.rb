@@ -14,4 +14,61 @@ describe HideMyAss::Proxy do
     it('anonymity is High+KA') { expect(proxy.anonymity).to eq('High +KA') }
     it('url correct') { expect(proxy.url).to eq('http://62.38.52.56:8080') }
   end
+
+  describe 'SSL support' do
+    context 'when protocol is http' do
+      before { allow(proxy).to receive(:protocol).and_return 'http' }
+      it('is not supported') { expect(proxy.ssl?).to be false }
+    end
+
+    context 'when protocol is https' do
+      before { allow(proxy).to receive(:protocol).and_return 'https' }
+      it('is supported') { expect(proxy.ssl?).to be true }
+    end
+
+    context 'when protocol is socks' do
+      before { allow(proxy).to receive(:protocol).and_return 'socks4/5' }
+      it('is supported') { expect(proxy.ssl?).to be true }
+    end
+  end
+
+  describe 'anonymity' do
+    before { allow(proxy).to receive(:anonymity).and_return anonymity }
+
+    context 'low' do
+      let(:anonymity) { 'low' }
+      it('is not anonym') { expect(proxy.anonym?).to be false }
+    end
+
+    context 'medium' do
+      let(:anonymity) { 'medium' }
+      it('is not anonym') { expect(proxy.anonym?).to be false }
+    end
+
+    context 'high' do
+      let(:anonymity) { 'high' }
+      it('is anonym') { expect(proxy.anonym?).to be true }
+    end
+  end
+
+  describe 'security' do
+    context 'when protocol is HTTP' do
+      before { allow(proxy).to receive(:protocol).and_return 'http' }
+      it('is not secure') { expect(proxy.secure?).to be false }
+    end
+
+    context 'when network is not anonym' do
+      before { allow(proxy).to receive(:anonym?).and_return false }
+      it('is not secure') { expect(proxy.secure?).to be false }
+    end
+
+    context 'when network is anonym and protocol supports SSL' do
+      before do
+        allow(proxy).to receive(:anonym?).and_return true
+        allow(proxy).to receive(:ssl?).and_return true
+      end
+
+      it('is secure') { expect(proxy.secure?).to be true }
+    end
+  end
 end
