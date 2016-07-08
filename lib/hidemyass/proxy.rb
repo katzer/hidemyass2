@@ -96,7 +96,7 @@ module HideMyAss
     #
     # @return [ String ]
     def type
-      @type ||= @row.at_xpath('td[7]').text.strip.downcase
+      @type ||= @row.at_xpath('td[7]').text.strip.downcase[0..4]
     end
 
     alias protocol type
