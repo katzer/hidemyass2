@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Sebastián Katzer']
   spec.email         = ['katzer@appplant.de']
 
-  spec.summary       = 'Hide My Ass! fetches proxies at www.hidemyass.com.'
-  spec.description   = 'Hide My Ass! fetches proxies at www.hidemyass.com.'
-  spec.homepage      = 'https://github.com/appPlant/hidemyass'
+  spec.summary       = 'Hide My Ass! /2 fetches proxies at www.hidemyass.com.'
+  spec.description   = 'Allows everyone to surf privately from anywhere.'
+  spec.homepage      = 'https://github.com/appPlant/hidemyass2'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f =~ /spec/ }
