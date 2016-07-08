@@ -28,7 +28,7 @@ module HideMyAss
     # @return [ HideMyAss::ProxyList ]
     def initialize(form_data = HideMyAss.form_data)
       self.form_data = form_data.dup
-      @proxies       = fetch
+      @proxies       = fetch.keep_if(&:valid?)
     end
 
     # Form data to support custom searches

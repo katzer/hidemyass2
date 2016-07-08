@@ -115,6 +115,13 @@ module HideMyAss
       "#{protocol}://#{ip}:#{port}"
     end
 
+    # If the IP is valid.
+    #
+    # @return [ Boolean ]
+    def valid?
+      ip.split('.').reject(&:empty?).count == 4
+    end
+
     # If the proxy's network protocol is HTTPS.
     #
     # @return [ Boolean ]
@@ -158,14 +165,14 @@ module HideMyAss
     #
     # @return [ Boolean ]
     def ip_block?(el)
-      return false if el[:style].to_s =~ /no/
+      return el[:style].include? 'in' if el[:style]
 
       @clss ||= @row.at_xpath('td[2]/span/style').text.split
                     .map! { |it| it[1..4] if it !~ /none/ }.compact
 
       cls = el[:class].to_s
 
-      el.name == 'text' || cls =~ /\d+/ || @clss.include?(cls)
+      el.name == 'text' || @clss.include?(cls) || cls =~ /^\d+$/
     end
   end
 end

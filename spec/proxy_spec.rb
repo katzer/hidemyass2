@@ -71,4 +71,18 @@ describe HideMyAss::Proxy do
       it('is secure') { expect(proxy.secure?).to be true }
     end
   end
+
+  describe 'ip' do
+    before { allow(proxy).to receive(:ip).and_return ip }
+
+    context 'when valid' do
+      let(:ip) { '1.1.1.1' }
+      it('is marked as valid') { expect(proxy.valid?).to be true }
+    end
+
+    context 'when invalid' do
+      let(:ip) { '1.1.1' }
+      it('is marked as invalid') { expect(proxy.valid?).to be false }
+    end
+  end
 end
