@@ -22,21 +22,37 @@ require 'hidemyass/version'
 module HideMyAss
   # List of proxies found at hidemyass.com.
   #
-  # @param [ Hash ] data Optional form data for custom searches.
+  # @example Fetch the list with each call.
+  #   HideMyAss.proxies!
+  #   # => HideMyAss::ProxyList
   #
-  # @return [ HideMyAss::ProxyList> ]
-  def self.proxies!(*args)
-    @proxies = nil
-    proxies(*args)
-  end
-
-  # List of proxies found at hidemyass.com but does not clear cached proxies
-  # from former search result.
+  # @example Limit proxies to only available in Europe.
+  #   HideMyAss.proxies 'c[]' => 'Europe'
+  #   # => HideMyAss::ProxyList
   #
   # @param [ Hash ] data Optional form data for custom searches.
   #
   # @return [ HideMyAss::ProxyList> ]
   def self.proxies(data = nil)
+    @proxies = nil
+    proxies!(data)
+  end
+
+  # List of proxies found at hidemyass.com but returns former search result
+  # if available.
+  #
+  # @example Fetch the list with each call.
+  #   HideMyAss.proxies!
+  #   # => HideMyAss::ProxyList
+  #
+  # @example Limit proxies to only available in Europe.
+  #   HideMyAss.proxies 'c[]' => 'Europe'
+  #   # => HideMyAss::ProxyList
+  #
+  # @param [ Hash ] data Optional form data for custom searches.
+  #
+  # @return [ HideMyAss::ProxyList> ]
+  def self.proxies!(data = nil)
     self.form_data = data if data
     @proxies ||= ProxyList.new(form_data)
   end

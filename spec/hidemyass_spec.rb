@@ -32,12 +32,12 @@ describe HideMyAss do
       end
 
       context 'when asking for cached list again' do
-        subject { HideMyAss.proxies }
+        subject { HideMyAss.proxies! }
         it('returns the same list') { is_expected.to be(list) }
       end
 
-      context 'when asking for cached list again' do
-        subject { HideMyAss.proxies! }
+      context 'when asking for a new list' do
+        subject { HideMyAss.proxies }
         it('returns a new list') { is_expected.not_to be(list) }
       end
     end

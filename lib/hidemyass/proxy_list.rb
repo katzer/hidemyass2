@@ -31,6 +31,7 @@ module HideMyAss
       @proxies       = fetch
     end
 
+    # Form data to support custom searches
     attr_accessor :form_data
 
     def_delegator :@proxies, :each
