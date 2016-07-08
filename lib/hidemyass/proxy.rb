@@ -157,6 +157,17 @@ module HideMyAss
       anonym? && ssl?
     end
 
+    # Custom inspect method.
+    #
+    # @example
+    #   inspect
+    # => '<HideMyAss::Proxy http://123.57.52.171:80>'
+    #
+    # @return [ String ]
+    def inspect
+      "<#{self.class.name} #{url}>"
+    end
+
     private
 
     # To find out if the element is a part of the IP.
