@@ -22,7 +22,7 @@ describe HideMyAss do
       end
     end
 
-    before { stub_request(:post, /hidemyass/).and_timeout }
+    before { stub_request(:get, /incloak.com/).and_timeout }
 
     context 'when asking for all proxies' do
       let!(:list) { HideMyAss.proxies }

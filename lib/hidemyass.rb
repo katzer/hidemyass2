@@ -69,28 +69,21 @@ module HideMyAss
 
   # Get form data for custom search.
   #
-  # c[]  - Countries
-  # p    - Port. Defaults to all ports.
-  # pr[] - Protocol. 0..2 = HTTP, HTTPS, socks4/5
-  # a[]  - Anonymity level. 0..4 = None, Low, Medium, High, High +KA
-  # sp[] - Speed. 0..2 = Slow, Medium, Fast.
-  # ct[] - Connection time. 0..2 = Slow, Medium, Fast
-  # s    - Sort. 0..3 = Response time, Connection time, Country A-Z.
-  # o    - Order. 0, 1 = DESC, ASC.
-  # pp   - Per Page. 0..3 = 10, 25, 50, 100.
-  # sortBy - Sort by. Defaults to date.
+  # start     - Offset. Defaults to 0.
+  # end       - Max. number of proxies to fetch. Defaults to 2000.
+  # countries - Country. Defaults to all countries.
+  # ports     - Port. Defaults to any port.
+  # type      - Protocol. h = HTTP, s = HTTPS, 4 = SOCKS4, 5 = SOCKS5
+  # anon      - Anonymity level. 1..4 = None, Low, Medium, High
+  # maxtime   - Speed in milliseconds.
   #
   # @return [ Hash ]
   def self.form_data
-    @form_data ||= { 'c[]'  => nil,
-                     'p'    => nil,
-                     'pr[]' => [0, 1],
-                     'a[]'  => [3, 4],
-                     'sp[]' => [1, 2, 3],
-                     'ct[]' => [1, 2, 3],
-                     's'    => 1,
-                     'o'    => 0,
-                     'pp'   => 3,
-                     'sortBy' => 'response_time' }
+    @form_data ||= { start: 0,
+                     end:   2000,
+                     anon:  nil,
+                     type:  nil,
+                     ports: nil,
+                     maxtime: nil }
   end
 end

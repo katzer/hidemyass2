@@ -1,12 +1,18 @@
 # HIDE MY ASS! /2 [![Build Status](https://travis-ci.org/appPlant/hidemyass2.svg?branch=master)](https://travis-ci.org/appPlant/hidemyass2) [![Code Climate](https://codeclimate.com/github/appPlant/hidemyass2/badges/gpa.svg)](https://codeclimate.com/github/appPlant/hidemyass2) [![Test Coverage](https://codeclimate.com/github/appPlant/hidemyass2/badges/coverage.svg)](https://codeclimate.com/github/appPlant/hidemyass2/coverage) [![Dependency Status](https://gemnasium.com/badges/github.com/appPlant/hidemyass2.svg)](https://gemnasium.com/github.com/appPlant/hidemyass2)
 
-Hide My Ass! /2 fetches proxies at www.hidemyass.com to allow everyone to surf privately from anywhere.
+Hide My Ass! /2 fetches proxies at https://incloak.com to allow everyone to surf privately from anywhere.
 
 - Proxy lists are checked in real time
 
-- Sortable by speed, with the fastest proxies listed first
+- Around __1.000__ proxies at all
 
-- Sortable by country, anonymity, ...
+- Sortable by speed, country, anonymity and many more
+
+The graph shows the amount of change dynamics in the proxy list for the last 2 days.
+
+<p align="left">
+    <img src="https://incloak.com/images/last_2days_mini.png"></img>
+</p>
 
 ## Installation
 
@@ -26,42 +32,52 @@ Or install it yourself as:
 
 ## Usage
 
-To fetch all proxies simply run `HideMyAss.proxies`.
+From terminal execute:
+
+    $ bundle exec hidemyass
+
+    https://188.166.233.171:8080
+    http://187.85.207.47:3128
+    http://201.22.213.7:8080
+    https://103.253.146.197:8080
+    https://139.59.226.223:8080
+    socks4://80.255.139.145:1080
+    socks5://5.135.151.28:60088
+    ...
+
+For Ruby run:
 
 ```ruby
 require 'hidemyass'
 
-proxies = HideMyAss.proxies
-# => ProxyList
+HideMyAss.proxies
+#<HideMyAss::ProxyList:0x00000000000000 @uri="..." @proxies=[...]>
 ```
 
-To reuse that list instead of fetching a new one use `HideMyAss.proxies!`.
+__Note:__ To reuse that list instead of fetching a new one use `HideMyAss.proxies!`.
 
-To fetch proxies matching some criteria simply add filter options. Use `HideMyAss.form_data` to see and modify their defaults.
+#### Filter proxies
 
 ```ruby
 require 'hidemyass'
 
-# c[]  - Countries
-# p    - Port. Defaults to all ports.
-# pr[] - Protocol. 0..2 = HTTP, HTTPS, socks4/5
-# a[]  - Anonymity level. 0..4 = None, Low, Medium, High, High +KA
-# sp[] - Speed. 0..2 = Slow, Medium, Fast.
-# ct[] - Connection time. 0..2 = Slow, Medium, Fast
-# s    - Sort. 0..3 = Response time, Connection time, Country A-Z.
-# o    - Order. 0, 1 = DESC, ASC.
-# pp   - Per Page. 0..3 = 10, 25, 50, 100.
-# sortBy - Sort by. Defaults to date.
+# start     - Offset. Defaults to 0.
+# end       - Max. number of proxies to fetch. Defaults to 2000.
+# countries - Country. Defaults to all countries.
+# ports     - Port. Defaults to any port.
+# type      - Protocol. h = HTTP, s = HTTPS, 4 = SOCKS4, 5 = SOCKS5
+# anon      - Anonymity level. 1..4 = None, Low, Medium, High
+# maxtime   - Speed in milliseconds.
 
-proxies = HideMyAss.proxies 'c[]' => 'France', sortBy: 'response_time'
+proxies = HideMyAss.proxies countries: 'FR', type: 'hs'
 
 proxies.first.country
 # => 'france'
 ```
 
-Visit http://proxylist.hidemyass.com for more informations how to filter.
+Visit https://incloak.com/proxy-list/ for more informations how to filter.
 
-To get the url of each proxy call `proxy.url`.
+#### Get the url of each proxy
 
 ```ruby
 require 'hidemyass'
@@ -71,10 +87,6 @@ urls = HideMyAss.proxies.map(&:url)
 ```
 
 Refer to the [Proxy](https://github.com/appPlant/hidemyass2/blob/master/lib/hidemyass/proxy.rb) class for more advanced usage and a complete list of properties like `speed`, `ip`, `ssl?`, `anonym?` or `secure?`.
-
-Print out all proxy urls on command line:
-
-    $ bundle exec hidemyass
 
 ## Development
 

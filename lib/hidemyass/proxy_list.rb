@@ -17,7 +17,7 @@ module HideMyAss
     include Enumerable
     extend Forwardable
 
-    ENDPOINT = 'http://proxylist.hidemyass.com'.freeze
+    ENDPOINT = 'https://incloak.com/proxy-list/?start=0&end=2000'.freeze
 
     private_constant :ENDPOINT
 
@@ -27,30 +27,37 @@ module HideMyAss
     #
     # @return [ HideMyAss::ProxyList ]
     def initialize(form_data = HideMyAss.form_data)
-      self.form_data = form_data.dup
-      @proxies       = fetch.keep_if(&:valid?)
+      self.form_data = form_data.reject { |_, v| v.nil? }
+      @proxies       = fetch
     end
 
+    def_delegator :@proxies, :each
+
     # Form data to support custom searches
+    #
+    # @return [ Hash ]
     attr_accessor :form_data
 
-    def_delegator :@proxies, :each
+    # Build URI for endpoint including all search form params.
+    #
+    # @return [ URI ]
+    def uri
+      uri       = URI(ENDPOINT)
+      uri.query = URI.encode_www_form(form_data)
+      uri
+    end
 
     private
 
     # Fetch list of all proxies.
     #
     # @return [ Array<HideMyAss::Proxy> ]
-    def fetch(url = ENDPOINT)
-      res     = Net::HTTP.post_form(URI(url), form_data)
-      page    = Nokogiri::HTML(res.body, nil, 'UTF-8')
-      sel_row = '//table[@id="listable"]/tbody/tr'
-      sel_lnk = 'section > section.section-component > section.hma-pagination li.arrow.next:not(.unavailable) > a' # rubocop:disable Metrics/LineLength
+    def fetch
+      body  = Net::HTTP.get(uri)
+      page  = Nokogiri::HTML(body, nil, 'UTF-8')
+      sel   = '//*[@id="content-section"]/section[1]/div/table/tbody/tr'
 
-      proxies = page.xpath(sel_row).map { |row| Proxy.new(row) }
-      link    = page.at_css(sel_lnk)
-
-      link ? proxies.concat(fetch("#{ENDPOINT}#{link[:href]}")) : proxies
+      page.xpath(sel).map { |row| Proxy.new(row) }
     rescue Timeout::Error
       []
     end

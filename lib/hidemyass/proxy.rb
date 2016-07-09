@@ -33,62 +33,34 @@ module HideMyAss
       @row = row
     end
 
-    # Time in seconds when the last ping was made.
-    #
-    # @return [ Int ]
-    def last_updated
-      @last_updated ||= begin
-        @row.at_xpath('td[1]').text.strip.split(' ').map do |it|
-          case it
-          when /sec/ then it.scan(/\d+/)[0].to_i
-          when /min/ then it.scan(/\d+/)[0].to_i * 60
-          when /h/   then it.scan(/\d+/)[0].to_i * 3_600
-          when /d/   then it.scan(/\d+/)[0].to_i * 86_400
-          end
-        end.reduce(&:+)
-      end
-    end
-
-    alias last_test last_updated
-
     # The IP of the proxy server.
     #
     # @return [ String ]
     def ip
-      @ip ||= @row.at_xpath('td[2]/span').children
-                  .select { |el| ip_block? el }
-                  .map! { |el| el.text.strip }
-                  .join('')
+      @ip ||= @row.at_xpath('td[1]/text()').text.strip
     end
 
     # The port for the proxy.
     #
     # @return [ Int ]
     def port
-      @port ||= @row.at_xpath('td[3]').text.strip.to_i
+      @port ||= @row.at_xpath('td[2]/text()').text.strip.to_i
     end
 
     # The country where the proxy is hosted in downcase letters.
     #
     # @return [ String ]
     def country
-      @country ||= @row.at_xpath('td[4]').text.strip.downcase
+      @country ||= @row.at_xpath('td[3]/div/text()')
+                       .text.strip.downcase!.scan(/[[:word:]]+$/).last
     end
 
     # The average response time in milliseconds.
     #
     # @return [ Int ]
     def speed
-      @speed ||= @row.at_xpath('td[5]/div')[:value].to_i
-    end
-
-    alias response_time speed
-
-    # The average connection time in milliseconds.
-    #
-    # @return [ Int ]
-    def connection_time
-      @connection_time ||= @row.at_xpath('td[6]/div')[:value].to_i
+      @speed ||= @row.at_xpath('td[4]/div/div/p/text()')
+                     .text.scan(/^\d+/)[0].to_i
     end
 
     # The network protocol in in downcase letters.
@@ -96,7 +68,7 @@ module HideMyAss
     #
     # @return [ String ]
     def type
-      @type ||= @row.at_xpath('td[7]').text.strip.downcase[0..4]
+      @type ||= @row.at_xpath('td[5]/text()').text.strip.split.last.downcase!
     end
 
     alias protocol type
@@ -106,21 +78,28 @@ module HideMyAss
     #
     # @return [ String ]
     def anonymity
-      @anonymity ||= @row.at_xpath('td[8]').text.strip.downcase
+      @anonymity ||= @row.at_xpath('td[6]').text.strip.downcase!
+    end
+
+    # Time in minutes when its been last checked.
+    #
+    # @return [ Int ]
+    def last_check
+      @last_check ||= @row.at_xpath('td[7]/text()').text.scan(/^\d+/)[0].to_i
+    end
+
+    # The relative URL without the leading protocol.
+    #
+    # @return [ String ]
+    def rel_url
+      "#{ip}:#{port}"
     end
 
     # The complete URL of that proxy server.
     #
     # @return [ String ]
     def url
-      "#{protocol}://#{ip}:#{port}"
-    end
-
-    # If the IP is valid.
-    #
-    # @return [ Boolean ]
-    def valid?
-      ip.split('.').reject(&:empty?).count == 4
+      "#{protocol}://#{rel_url}"
     end
 
     # If the proxy's network protocol is HTTP.
@@ -165,7 +144,6 @@ module HideMyAss
       anonym? && ssl?
     end
 
-    # :nocov:
     # Custom inspect method.
     #
     # @example
@@ -173,27 +151,10 @@ module HideMyAss
     # => '<HideMyAss::Proxy http://123.57.52.171:80>'
     #
     # @return [ String ]
+    # :nocov:
     def inspect
       "<#{self.class.name} #{url}>"
     end
     # :nocov:
-
-    private
-
-    # To find out if the element is a part of the IP.
-    #
-    # @param [ Nokogiri::XML ] el
-    #
-    # @return [ Boolean ]
-    def ip_block?(el)
-      return el[:style].include? 'in' if el[:style]
-
-      @clss ||= @row.at_xpath('td[2]/span/style').text.split
-                    .map! { |it| it[1..4] if it !~ /none/ }.compact
-
-      cls = el[:class].to_s
-
-      el.name == 'text' || @clss.include?(cls) || cls =~ /^\d+$/
-    end
   end
 end

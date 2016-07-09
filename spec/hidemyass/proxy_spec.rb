@@ -4,15 +4,14 @@ describe HideMyAss::Proxy do
   let!(:proxy) { described_class.new(row) }
 
   context 'when initialized with sample fixture' do
-    it('last_update is 77102') { expect(proxy.last_updated).to eq(77_102) }
-    it('ip is 62.38.52.56') { expect(proxy.ip).to eq('62.38.52.56') }
-    it('port is 8080') { expect(proxy.port).to eq(8080) }
-    it('country is Greece') { expect(proxy.country).to eq('greece') }
-    it('speed is 2180') { expect(proxy.speed).to eq(2180) }
-    it('connection time is 56') { expect(proxy.connection_time).to eq(56) }
-    it('protocol is http') { expect(proxy.protocol).to eq('http') }
-    it('anonymity is High+KA') { expect(proxy.anonymity).to eq('high +ka') }
-    it('url correct') { expect(proxy.url).to eq('http://62.38.52.56:8080') }
+    it('last check is 1 minute ago') { expect(proxy.last_check).to eq(1) }
+    it('ip is 146.0.253.113') { expect(proxy.ip).to eq('146.0.253.113') }
+    it('port is 1080') { expect(proxy.port).to eq(1080) }
+    it('country is Germany') { expect(proxy.country).to eq('germany') }
+    it('speed is 260') { expect(proxy.speed).to eq(260) }
+    it('protocol is SOCKS4') { expect(proxy.protocol).to eq('socks4') }
+    it('anonymity is high') { expect(proxy.anonymity).to eq('high') }
+    it('url correct') { expect(proxy.url).to eq('socks4://146.0.253.113:1080') }
   end
 
   describe 'SSL support' do
@@ -69,20 +68,6 @@ describe HideMyAss::Proxy do
       end
 
       it('is secure') { expect(proxy.secure?).to be true }
-    end
-  end
-
-  describe 'ip' do
-    before { allow(proxy).to receive(:ip).and_return ip }
-
-    context 'when valid' do
-      let(:ip) { '1.1.1.1' }
-      it('is marked as valid') { expect(proxy.valid?).to be true }
-    end
-
-    context 'when invalid' do
-      let(:ip) { '1.1.1' }
-      it('is marked as invalid') { expect(proxy.valid?).to be false }
     end
   end
 end
