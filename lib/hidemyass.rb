@@ -14,9 +14,9 @@ require 'hidemyass/version'
 #   HideMyAss.proxies!
 #   # => HideMyAss::ProxyList
 #
-# @example Limit proxies to only available in Europe.
+# @example Limit proxies to only available in Germany.
 #
-#   HideMyAss.proxies 'c[]' => 'Europe'
+#   HideMyAss.proxies { country == 'Germany' }
 #   # => HideMyAss::ProxyList
 #
 module HideMyAss
@@ -27,15 +27,15 @@ module HideMyAss
   #   # => HideMyAss::ProxyList
   #
   # @example Limit proxies to only available in Europe.
-  #   HideMyAss.proxies 'c[]' => 'Europe'
+  #   HideMyAss.proxies { country == 'Germany' }
   #   # => HideMyAss::ProxyList
   #
-  # @param [ Hash ] data Optional form data for custom searches.
+  # @param [ Proc ] block Optional where clause to filter out proxies.
   #
   # @return [ HideMyAss::ProxyList> ]
-  def self.proxies(data = nil)
+  def self.proxies(&block)
     @proxies = nil
-    proxies!(data)
+    proxies!(&block)
   end
 
   # List of proxies found at hidemyass.com but returns former search result
@@ -45,45 +45,14 @@ module HideMyAss
   #   HideMyAss.proxies!
   #   # => HideMyAss::ProxyList
   #
-  # @example Limit proxies to only available in Europe.
-  #   HideMyAss.proxies 'c[]' => 'Europe'
+  # @example Limit proxies to only available in Germany.
+  #   HideMyAss.proxies { country == 'Germany' }
   #   # => HideMyAss::ProxyList
   #
-  # @param [ Hash ] data Optional form data for custom searches.
+  # @param [ Proc ] block Optional where clause to filter out proxies.
   #
   # @return [ HideMyAss::ProxyList> ]
-  def self.proxies!(data = nil)
-    self.form_data = data if data
-    @proxies ||= ProxyList.new(form_data)
-  end
-
-  # Set form data to support custom searches.
-  #
-  # @param [ Hash ] data See form_data for more info.
-  #
-  # @return [ Void ]
-  def self.form_data=(data)
-    raise ArgumentError, 'form data has to be a hash' unless data.is_a? Hash
-    @form_data = data
-  end
-
-  # Get form data for custom search.
-  #
-  # start     - Offset. Defaults to 0.
-  # end       - Max. number of proxies to fetch. Defaults to 2000.
-  # countries - Country. Defaults to all countries.
-  # ports     - Port. Defaults to any port.
-  # type      - Protocol. h = HTTP, s = HTTPS, 4 = SOCKS4, 5 = SOCKS5
-  # anon      - Anonymity level. 1..4 = None, Low, Medium, High
-  # maxtime   - Speed in milliseconds.
-  #
-  # @return [ Hash ]
-  def self.form_data
-    @form_data ||= { start: 0,
-                     end:   2000,
-                     anon:  nil,
-                     type:  nil,
-                     ports: nil,
-                     maxtime: nil }
+  def self.proxies!(&block)
+    @proxies ||= ProxyList.new(&block)
   end
 end

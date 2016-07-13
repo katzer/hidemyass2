@@ -19,13 +19,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.post_install_message = 'Install nokogiri for additional proxies.'
+
   spec.add_development_dependency 'bundler', '~> 1.11'
   spec.add_development_dependency 'rake', '~> 11.1'
-  spec.add_development_dependency 'rspec', '~> 3.5'
-  spec.add_development_dependency 'webmock', '~> 2.0'
-  spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'codeclimate-test-reporter'
-  spec.add_development_dependency 'pry-nav'
+  spec.add_development_dependency 'nokogiri', '~> 1.6'
 
-  spec.add_runtime_dependency 'nokogiri', '~> 1.6'
+  spec.add_runtime_dependency 'json'
 end

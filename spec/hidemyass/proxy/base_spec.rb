@@ -1,18 +1,6 @@
 
-describe HideMyAss::Proxy do
-  let!(:row) { Nokogiri::XML(IO.read('spec/fixtures/row.html')).child }
-  let!(:proxy) { described_class.new(row) }
-
-  context 'when initialized with sample fixture' do
-    it('last check is 1 minute ago') { expect(proxy.last_check).to eq(1) }
-    it('ip is 146.0.253.113') { expect(proxy.ip).to eq('146.0.253.113') }
-    it('port is 1080') { expect(proxy.port).to eq(1080) }
-    it('country is Germany') { expect(proxy.country).to eq('germany') }
-    it('speed is 260') { expect(proxy.speed).to eq(260) }
-    it('protocol is SOCKS4') { expect(proxy.protocol).to eq('socks4') }
-    it('anonymity is high') { expect(proxy.anonymity).to eq('high') }
-    it('url correct') { expect(proxy.url).to eq('socks4://146.0.253.113:1080') }
-  end
+describe HideMyAss::Proxy::Base do
+  let!(:proxy) { described_class.new(nil) }
 
   describe 'SSL support' do
     context 'when protocol is http' do
@@ -51,6 +39,8 @@ describe HideMyAss::Proxy do
   end
 
   describe 'security' do
+    before { allow(proxy).to receive(:anonymity).and_return 'medium' }
+
     context 'when protocol is HTTP' do
       before { allow(proxy).to receive(:protocol).and_return 'http' }
       it('is not secure') { expect(proxy.secure?).to be false }
@@ -68,6 +58,27 @@ describe HideMyAss::Proxy do
       end
 
       it('is secure') { expect(proxy.secure?).to be true }
+    end
+  end
+
+  describe '#url' do
+    context 'when ip = 1.0.0.1 and port = 80' do
+      before do
+        allow(proxy).to receive(:ip).and_return '1.0.0.1'
+        allow(proxy).to receive(:port).and_return 80
+      end
+
+      it('relative url is 1.0.0.1:80') do
+        expect(proxy.rel_url).to eq('1.0.0.1:80')
+      end
+
+      context 'and protocol is http' do
+        before { allow(proxy).to receive(:protocol).and_return 'http' }
+
+        it('url is http://1.0.0.1:80') do
+          expect(proxy.url).to eq('http://1.0.0.1:80')
+        end
+      end
     end
   end
 end

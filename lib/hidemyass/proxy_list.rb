@@ -1,14 +1,11 @@
 require 'forwardable'
 require 'open-uri'
-require 'net/http'
-require 'nokogiri'
-require 'hidemyass/proxy'
 
 module HideMyAss
   # Represent a list of proxies that match the specified search properties.
   #
   # @example Iterate over all proxy server hosted in the US.
-  #   ProxyList.new('c[]' => 'Europe').each { |proxy| ... }
+  #   ProxyList.new { country == 'US'}.each { |proxy| ... }
   #
   # @example List of all proxy server URLs
   #   ProxyList.new.map(&:url)
@@ -17,48 +14,59 @@ module HideMyAss
     include Enumerable
     extend Forwardable
 
-    ENDPOINT = 'https://incloak.com/proxy-list/?start=0&end=2000'.freeze
-
-    private_constant :ENDPOINT
-
     # Represent a list of proxies that match the specified search properties.
     #
-    # @param [ Hash ] form_data See HideMyAss.form_data for more info.
+    # @param [ Proc ] block Optional where clause to filter out proxies.
     #
     # @return [ HideMyAss::ProxyList ]
-    def initialize(form_data = HideMyAss.form_data)
-      self.form_data = form_data.reject { |_, v| v.nil? }
-      @proxies       = fetch
+    def initialize(&block)
+      @proxies = fetch(&block)
     end
 
     def_delegator :@proxies, :each
 
-    # Form data to support custom searches
-    #
-    # @return [ Hash ]
-    attr_accessor :form_data
-
-    # Build URI for endpoint including all search form params.
-    #
-    # @return [ URI ]
-    def uri
-      uri       = URI(ENDPOINT)
-      uri.query = URI.encode_www_form(form_data)
-      uri
-    end
-
     private
 
-    # Fetch list of all proxies.
+    # Fetch proxies from all backends.
     #
-    # @return [ Array<HideMyAss::Proxy> ]
-    def fetch
-      body  = Net::HTTP.get(uri)
+    # @param [ Proc ] block Optional where clause to filter out proxies.
+    #
+    # @return [ Array<HideMyAss::Proxy::Base> ]
+    def fetch(&block)
+      proxies = hidester_proxies.concat(hide_me_proxies)
+      proxies.uniq!(&:ip)
+
+      block_given? ? proxies.keep_if(&block) : proxies
+    end
+
+    # Fetch all proxies from hideme.ru/proxy-list
+    #
+    # @return [ Array<HideMyAss::Proxy::HideMe> ]
+    def hide_me_proxies
+      require 'hidemyass/proxy/hide_me'
+      require 'nokogiri'
+
+      body  = open('https://incloak.com/proxy-list/?end=5000')
       page  = Nokogiri::HTML(body, nil, 'UTF-8')
       sel   = '//*[@id="content-section"]/section[1]/div/table/tbody/tr'
 
-      page.xpath(sel).map { |row| Proxy.new(row) }
-    rescue Timeout::Error
+      page.xpath(sel).map { |row| Proxy::HideMe.new(row) }
+    rescue Timeout::Error, LoadError, OpenURI::HTTPError
+      []
+    end
+
+    # Fetch all proxies from hidester.com/proxylist
+    #
+    # @return [ Array<HideMyAss::Proxy::Hidester> ]
+    def hidester_proxies
+      require 'hidemyass/proxy/hidester'
+      require 'json'
+
+      body = open('https://hidester.com/proxydata/php/data.php?mykey=data&limit=5000&orderBy=latest_check&sortOrder=DESC')
+      page = JSON.load(body)
+
+      page.map { |row| Proxy::Hidester.new(row) }
+    rescue Timeout::Error, LoadError, OpenURI::HTTPError
       []
     end
   end

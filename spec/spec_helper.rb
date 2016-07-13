@@ -1,5 +1,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
+require 'json'
+require 'nokogiri'
 require 'simplecov'
 require 'webmock/rspec'
 require 'codeclimate-test-reporter'
