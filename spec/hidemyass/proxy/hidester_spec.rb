@@ -4,7 +4,7 @@ describe HideMyAss::Proxy::Hidester do
   let!(:row) { JSON.load(IO.read('spec/fixtures/hidester.row.json')) }
   let!(:proxy) { described_class.new(row) }
 
-  before { Timecop.travel(Time.local(2016, 7, 13, 15, 0, 0)) }
+  before { Timecop.freeze(Time.utc(2016, 7, 13, 13, 0, 0)) }
 
   context 'when initialized with sample fixture' do
     it('last check is 20 minute ago') { expect(proxy.last_check).to eq(20) }
