@@ -23,23 +23,23 @@ describe HideMyAss::Proxy::Base do
     before { allow(proxy).to receive(:anonymity).and_return anonymity }
 
     context 'low' do
-      let(:anonymity) { 'low' }
+      let(:anonymity) { 0 }
       it('is not anonym') { expect(proxy.anonym?).to be false }
     end
 
     context 'medium' do
-      let(:anonymity) { 'medium' }
-      it('is not anonym') { expect(proxy.anonym?).to be false }
+      let(:anonymity) { 1 }
+      it('is anonym') { expect(proxy.anonym?).to be true }
     end
 
     context 'high' do
-      let(:anonymity) { 'high' }
+      let(:anonymity) { 2 }
       it('is anonym') { expect(proxy.anonym?).to be true }
     end
   end
 
   describe 'security' do
-    before { allow(proxy).to receive(:anonymity).and_return 'medium' }
+    before { allow(proxy).to receive(:anonymity).and_return 1 }
 
     context 'when protocol is HTTP' do
       before { allow(proxy).to receive(:protocol).and_return 'http' }

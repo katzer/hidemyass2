@@ -27,12 +27,12 @@ describe HideMyAss::ProxyList do
       expect(subject.find_all(&:ssl?).count).to eq(92)
     end
 
-    it('contains 112 proxies with high anonymity') do
-      expect(subject.find_all(&:anonym?).count).to eq(112)
+    it('contains 123 proxies with high anonymity') do
+      expect(subject.find_all(&:anonym?).count).to eq(123)
     end
 
-    it('contains 85 secure proxies') do
-      expect(subject.find_all(&:secure?).count).to eq(85)
+    it('contains 89 secure proxies') do
+      expect(subject.find_all(&:secure?).count).to eq(89)
     end
   end
 

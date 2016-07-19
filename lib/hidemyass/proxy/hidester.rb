@@ -40,15 +40,15 @@ module HideMyAss
         @row['type']
       end
 
-      # The level of anonymity in downcase letters.
-      # (low, medium, high, ...)
+      # The level of anonymity.
+      # (No=0, Anonymous=1, Elite=2)
       #
-      # @return [ String ]
+      # @return [ Int ]
       def anonymity
         case @row['anonymity']
-        when 'Elite'     then 'high'
-        when 'Anonymous' then 'medium'
-        else 'no'
+        when 'Elite'     then 2
+        when 'Anonymous' then 1
+        else 0
         end
       end
 

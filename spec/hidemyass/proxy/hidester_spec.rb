@@ -13,6 +13,6 @@ describe HideMyAss::Proxy::Hidester do
     it('country is Canada') { expect(proxy.country).to eq('canada') }
     it('speed is 141') { expect(proxy.speed).to eq(141) }
     it('protocol is SOCKS5') { expect(proxy.protocol).to eq('socks5') }
-    it('anonymity is high') { expect(proxy.anonymity).to eq('high') }
+    it('anonymity is high') { expect(proxy.anonymity).to eq(2) }
   end
 end

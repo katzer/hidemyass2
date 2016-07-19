@@ -89,11 +89,11 @@ module HideMyAss
         https? || socks?
       end
 
-      # If the proxy's anonymity is high or even higher.
+      # If the proxy is anonymity so the host does not know your IP.
       #
       # @return [ Boolean ]
       def anonym?
-        anonymity.start_with? 'high'
+        anonymity > 0
       end
 
       # If the proxy's anonymity is at least high and protocol is encrypted.

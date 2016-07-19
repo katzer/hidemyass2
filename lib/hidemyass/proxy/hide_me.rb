@@ -42,12 +42,18 @@ module HideMyAss
         @type ||= @row.at_xpath('td[5]/text()').text.strip.split.last.downcase!
       end
 
-      # The level of anonymity in downcase letters.
-      # (low, medium, high, ...)
+      # The level of anonymity.
+      # (low=0, medium=1, high=2)
       #
-      # @return [ String ]
+      # @return [ Int ]
       def anonymity
-        @anonymity ||= @row.at_xpath('td[6]').text.strip.downcase!
+        @anonymity ||= begin
+          case @row.at_xpath('td[6]/text()').text.strip
+          when 'High'   then 2
+          when 'Medium' then 1
+          else 0
+          end
+        end
       end
 
       # Time in minutes when its been last checked.

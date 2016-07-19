@@ -10,6 +10,6 @@ describe HideMyAss::Proxy::HideMe do
     it('country is Germany') { expect(proxy.country).to eq('germany') }
     it('speed is 260') { expect(proxy.speed).to eq(260) }
     it('protocol is SOCKS4') { expect(proxy.protocol).to eq('socks4') }
-    it('anonymity is high') { expect(proxy.anonymity).to eq('high') }
+    it('anonymity is high') { expect(proxy.anonymity).to eq(2) }
   end
 end
