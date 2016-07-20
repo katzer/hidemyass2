@@ -14,6 +14,7 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'hidemyass2'
+gem 'nokogiri' # To get the full proxy list (optional)
 ```
 
 And then execute:
