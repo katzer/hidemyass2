@@ -75,9 +75,12 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/apppla
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [MIT License][license].
 
 Made with :yum: from Leipzig
 
-© 2016 appPlant GmbH
+© 2016 [appPlant GmbH][appplant]
+
+[license]: http://opensource.org/licenses/MIT
+[appplant]: www.appplant.de
 
